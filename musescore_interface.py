@@ -107,8 +107,9 @@ def extract_parts(score, part_names: List[str]):
     for part in new_parts:
         for staff in part['Staff']:
             staff['@id'] = staff_ids[staff['@id']]
-            for linked_idx, linked in enumerate(staff['linkedTo']):
-               staff['linkedTo'][linked_idx] = staff_ids[linked]
+            if 'linkedTo' in staff:
+                for linked_idx, linked in enumerate(staff['linkedTo']):
+                   staff['linkedTo'][linked_idx] = staff_ids[linked]
 
     staffs = score['museScore']['Score']['Staff']
     new_staffs = new_score['museScore']['Score']['Staff']
