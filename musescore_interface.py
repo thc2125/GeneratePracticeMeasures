@@ -2,12 +2,12 @@ import xmltodict
 
 import copy
 import logging
+import subprocess
 
 from collections import defaultdict
 from pathlib import Path
 from typing import List
 from zipfile import ZipFile
-
 
 C_MUSESCORE_SUFFIX = '.mscx'
 
@@ -56,9 +56,9 @@ def write_score(score, score_write_filepath: Path, compressed: bool = False):
                   'w') as score_write_file:
             score_write_file.write(score_xml)
 
-def generate_window(score, window_size, parts=None):
-    if parts:
-        new_score = extract_parts(score, parts)
+def generate_window(score, window_size, part_names=None):
+    if part_names:
+        new_score = extract_parts(score, part_names)
     else:
         new_score = copy.deepcopy(score)
 
@@ -139,3 +139,16 @@ def copy_score(score):
     '''
     new_score = copy.deepcopy(score)
     return new_score
+
+def export(input_file_path, export_format, export_filepath=None):
+    '''
+    Note: Only works on Unix (i.e. Mac and Linux) currently-can fix by
+    changing the executable.
+    '''
+    if not export_filepath:
+        export_filepath = input_file_path.with_suffix('.' + export_format)
+    # TODO: Handle errors with executing the program
+    subprocess.run(['musescore', 
+                    '-o', str(export_filepath),
+                    str(input_file_path)])
+    return export_filepath
